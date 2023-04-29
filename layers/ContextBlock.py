@@ -1,7 +1,5 @@
 from tensorflow.keras import Model, layers
 
-self.reshape = layers.Reshape([1, numFilters])
-
 def h2c(hd,he):
     scores = tf.einsum('btf, btf-> bt', he, hd)
     weights = layers.Softmax(axis=1)(scores)

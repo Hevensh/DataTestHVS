@@ -23,10 +23,11 @@ class DecoderLSTMcell(Model):
         return h, y
 
 class DecoderBlock(Model):
-    def __init__(self,numFilters):
+    def __init__(self,numFilters,attentionLen):
         super().__init__()
         self.decoder = DecoderLSTMcell(numFilters)
         self.reshape = layers.Reshape([1, numFilters])
+        self.attentionLen = attentionLen
         
     def call(self, inputs, ite):
         numTime = inputs.shape[1]
@@ -34,7 +35,7 @@ class DecoderBlock(Model):
         h0 = self.reshape(inputs[:,ite,:])
         h, y = self.decoder(h0)        
         if numTime is not None:
-            for i in range(1,min(NUM_ATTNTION_LEN,ite)):
+            for i in range(1,min(self.attentionLen,ite)):
                 h, yi = self.decoder(h)
                 y = tf.concat([y, yi], axis=1)
 
@@ -49,7 +50,7 @@ def h2c(hd,he):
 class ContextBlock(Model):
     def __init__(self,numFilters=32, attentionLen=48):
         super().__init__()
-        self.he2hd = DecoderBlock(numFilters)
+        self.he2hd = DecoderBlock(numFilters,attentionLen)
         self.reshape = layers.Reshape([1, numFilters])
 
     def call(self, he):

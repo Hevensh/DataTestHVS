@@ -1,7 +1,7 @@
 from tensorflow.keras import Model, layers
 
 class ResidualBlock(Model):
-    def __init__(self,numFilters=NUM_FILTERS,sizeFilters=3):
+    def __init__(self,numFilters=32,sizeFilters=3):
         super().__init__()
         self.conv1 = layers.Conv1D(numFilters, sizeFilters, activation='relu', padding='causal')
         self.conv2 = layers.Conv1D(numFilters, sizeFilters, activation='relu', padding='causal')

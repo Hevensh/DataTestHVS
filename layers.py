@@ -52,6 +52,7 @@ class ContextBlock(Model):
         super().__init__()
         self.he2hd = DecoderBlock(numFilters,attentionLen)
         self.reshape = layers.Reshape([1, numFilters])
+        self.attentionLen = attentionLen
 
     def call(self, he):
         numTime = he.shape[1]
@@ -63,6 +64,6 @@ class ContextBlock(Model):
             for i in range(1,numTime):        
                 hd = self.he2hd(he,i)
                 #assert he.shape == hd.shape
-                contextVecteri = self.reshape(h2c(hd,he[:,max(i-attentionLen,0):i,:]))
+                contextVecteri = self.reshape(h2c(hd,he[:,max(i-self.attentionLen,0):i,:]))
                 contextVecter = tf.concat([contextVecter, contextVecteri], axis=1)
         return contextVecter
